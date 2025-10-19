@@ -67,7 +67,7 @@ def submit_answer(choice_text=None, force_timeout=False):
 
     st.session_state.score += add_score
     st.session_state.history.append({
-        "번호": st.session_state.idx + 1,
+        "문항": st.session_state.idx + 1,
         "문제유형": qtype,
         "규칙": rule,
         "보기": " / ".join(options),
@@ -148,9 +148,18 @@ else:
 
     df = pd.DataFrame(st.session_state.history)
     # 학생 정보 메타 부가
-    df.insert(0, "이름", student_name if student_name else "미기입")
-    df.insert(1, "반", class_name if class_name else "미기입")
-    df.insert(2, "번호", student_id if student_id else "미기입")
+    if "이름" not in df.columns:
+        df.insert(0, "이름", student_name if student_name else "미기입")
+    else:
+        df["이름"] = student_name if student_name else "미기입"
+    if "반" not in df.columns:
+        df.insert(1, "반", class_name if class_name else "미기입")
+    else:
+        df["반"] = class_name if class_name else "미기입"
+    if "번호" not in df.columns:
+        df.insert(2, "번호", student_id if student_id else "미기입")
+    else:
+        df["번호"] = student_id if student_id else "미기입"
 
     st.subheader("결과 테이블")
     st.dataframe(df, use_container_width=True)
